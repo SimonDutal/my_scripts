@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import math
+import time
+import random
+import numpy
+import keyboard
+
+boardSizeX = 188 #width  -
+boardSizeY = 35 #height |
+
+paddleSize = 7
+
+lPaddleY = math.trunc((boardSizeY + 1) / 2)
+rPaddleY = math.trunc((boardSizeY + 1) / 2)
+
+
+
+#
+
+ballX = math.trunc(boardSizeX / 2)
+ballY = math.trunc(boardSizeY / 2)
+ballVelX = 2
+ballVelY = 1
+
+paddleSize = math.trunc(paddleSize / 2) + 1
+
+lScore = 0
+rScore = 0
+#
+
+#board = numpy.full((boardSizeX, boardSizeY), " ")
+
+while (True):
+    
+    board = numpy.full((boardSizeX, boardSizeY), " ")
+
+    #input detection
+    if (keyboard.is_pressed('esc')):
+        sys.exit(0)
+    if (keyboard.is_pressed('s') and rPaddleY != boardSizeY - paddleSize):
+        rPaddleY = rPaddleY + 1
+    if (keyboard.is_pressed('z') and rPaddleY != paddleSize - 1):
+        rPaddleY = rPaddleY - 1
+    if (keyboard.is_pressed('Down') and lPaddleY != boardSizeY - paddleSize):
+        lPaddleY = lPaddleY + 1
+    if (keyboard.is_pressed('Up') and lPaddleY != paddleSize - 1):
+        lPaddleY = lPaddleY - 1
+
+    #physic part
+
+    ballX = ballX + ballVelX
+    ballY = ballY + ballVelY
+
+    #bouncing ball
+    if (ballX >= boardSizeX - 2 and lPaddleY - paddleSize <= ballY and lPaddleY + paddleSize >= ballY): #l paddle bounce
+        ballVelX = ballVelX * -1.25
+        ballVelY = ballVelY + (ballY - lPaddleY) * 0.25
+        ballX = ballX + ballVelX
+    elif (ballX >= boardSizeX - 2): #l wall
+        ballX = math.trunc(boardSizeX / 2)
+        ballY = math.trunc(boardSizeY / 2)
+        ballVelX = 2
+        ballVelY = 0
+        rScore = rScore + 1
+    if (ballX <= 0 and rPaddleY - paddleSize <= ballY and rPaddleY + paddleSize >= ballY): #r paddle bounce
+        ballVelX = ballVelX * -1.25
+        ballVelY = ballVelY + (ballY - rPaddleY) * 0.25
+        ballX =	ballX +	ballVelX
+    elif (ballX <= 0): #r wall
+        ballX = math.trunc(boardSizeX / 2)
+        ballY = math.trunc(boardSizeY / 2)
+        ballVelX = -2
+        ballVelY = 0
+        lScore = lScore + 1
+    if (ballY > boardSizeY - 1): #wall bounce
+        ballVelY = -ballVelY
+        ballY = ballY + ballVelY
+    if (ballY < 0): #wall bounce
+        ballVelY = -ballVelY
+        ballY = ballY + ballVelY
+        
+    #render part
+    
+    #right paddle
+    for i in range(paddleSize):
+        board[0][rPaddleY + i] = "r"
+    for i in range(paddleSize):
+        board[0][rPaddleY - i] = "r"
+
+    #left paddle
+    for i in range(paddleSize):
+        board[boardSizeX - 1][lPaddleY + i] = "l"
+    for i in range(paddleSize):
+        board[boardSizeX - 1][lPaddleY - i] = "l"
+
+    #ball
+    board[round(ballX)][round(ballY)] = "o"
+
+    
+    buffer = "\n\n\nConsole pong   score : " + "\033[0;91m" + str(rScore) + "\033[0m" + " - " + "\033[0;94m" + str(lScore) + "\033[0m"
+    buffer = buffer + "   move : z/s ↑/↓ exit : esc"
+    
+    buffer = buffer + "\n┌"
+    for i in range(boardSizeX):
+        buffer = buffer + "─"
+    buffer = buffer + "┐\n"
+    for y in range(boardSizeY):
+        buffer = buffer + "│"
+        for x in range(boardSizeX):
+            if (board[x][y] != " "):
+                if (board[x][y] == "l"):
+                    buffer = buffer + "\033[1;94m" + "│"
+                if (board[x][y] == "r"):
+            	    buffer = buffer + "\033[1;91m" + "│"
+                if (board[x][y] == "o"):
+                    buffer = buffer + "\033[1;97m" + "o"
+                buffer = buffer + "\033[0m"
+            else:
+                buffer = buffer + board[x][y]
+        buffer = buffer + "│\n"
+    buffer = buffer + "└"
+    for i in range(boardSizeX):
+        buffer = buffer + "─"
+    buffer = buffer + "┘\n"
+
+    #os.system("clear")
+    #print("")
+    #print('\033[42A\033[2K', end='')
+    print(buffer, end="\r")
+
+    time.sleep(1/30) # ~30FPS

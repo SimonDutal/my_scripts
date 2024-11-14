@@ -1,0 +1,45 @@
+#!/usr/bin/bash
+
+clear
+if [[ $1 =~ "-s" ]]; then
+   while true; do
+       echo -n "-"
+       sleep 0.1
+       echo -n "\\"
+       sleep 0.1
+       echo -n "|"
+       sleep 0.1
+       echo -n "/"
+       sleep 0.1
+   done
+fi
+if [[ $1 =~ "-c" ]]; then
+    while true; do
+       cowsay "-"
+       sleep 0.1
+       clear
+       cowsay "\\"
+       sleep 0.1
+       clear
+       cowsay "|"
+       sleep 0.1
+       clear
+       cowsay "/"
+       sleep 0.1
+       clear
+   done
+fi
+while true; do
+    echo "-"
+    sleep 0.1
+    clear
+    echo "\\"
+    sleep 0.1
+    clear
+    echo "|"
+    sleep 0.1
+    clear
+    echo "/"
+    sleep 0.1
+    clear
+done

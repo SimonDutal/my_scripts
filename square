@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+import sys
+
+text = ""
+
+if (not sys.stdin.isatty()):
+    for line in sys.stdin:
+        text = text + line
+elif (len(sys.argv) == 2):
+    text = sys.argv[1]
+else:
+    print("invalid argument")
+    sys.exit(84)
+if (len(text) == 0):
+    text = "\n"
+text = text.replace("	","    ")
+max_lenght = len(max(text.split('\n'), key = len))
+if (text[-1] ==  '\n'):
+    text = text[0:len(text)-1]
+    
+print("┌", end='')
+for i in range(max_lenght):
+    print("─", end='')
+print("┐", end='\n')
+for line in text.split('\n'):
+    print("│", end='')
+    print(line, end='')
+    print(" "*(max_lenght - len(line)), end='')
+    print("│", end='\n')
+print("└", end='')
+for i in range(max_lenght):
+    print("─", end='')
+print("┘", end='\n')

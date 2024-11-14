@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+echo "fixing ssh..."
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/key

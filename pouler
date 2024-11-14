@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+Color_Off='\033[0m'
+UWhite='\033[4;37m'
+echo -e "   ${UWhite}LE JEU DE LE POULER${Color_Off}"
+echo -e "  regarde pas le pouler"
+echo -e ""
+echo -e "              MM"
+echo -e "       |\\____/ \`>"
+echo -e "        \\PERDUT/"
+echo -e "           ]["
+echo -e ""

@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+echo -e ""
+echo -e "           MM"
+echo -e "      |\\__/ \`>"
+echo -e "       \\_  _/"
+echo -e "         ]["
+echo -e ""

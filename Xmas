@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+square " Merry Christmas! "
+Xmas_tree 10

@@ -1,0 +1,14 @@
+#!/usr/bin/bash                                                                                                                                                                               
+Color_Off='\033[0m'
+UWhite='\033[4;37m'
+echo -e "             ${UWhite}LE JEU DE LE CHA${Color_Off}"
+echo -e "          regarde pas pas le cha"
+echo -e ""
+echo -e " PERDUT           PERDUT            PERDUT"
+echo -e "            /\\_/\\           ___"
+echo -e "           = o_o =_______    \\ \\"
+echo -e " PERDUT     __^ meow __(  \\.__) )   PERDUT"
+echo -e "           <_____>__(_____)____/"
+echo -e ""
+echo -e	" PERDUT           PERDUT            PERDUT"
+echo -e ""

@@ -1,0 +1,11 @@
+#!/usr/bin/bash 
+if [ "$#" -ne 1 ]
+then
+echo "check args"
+exit 1
+fi
+echo "pushing with commit name '$1'"
+mr_clean
+git add .
+git commit -m "'$@'"
+git push
