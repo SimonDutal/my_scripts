@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import pyautogui
+import time
+
+#pyautogui.click(35, 1050)  #  first pinned dock app
+#pyautogui.click(100, 1050) # second pinned dock app
+
+def open_program (name):
+    pyautogui.press("win")
+    time.sleep(0.25)
+    pyautogui.typewrite(name, interval=0.01)
+    time.sleep(0.5)
+    pyautogui.click(960, 150)
+    time.sleep(0.25)
+
+open_program("Teams for linux")
+open_program("Firefox")
+open_program("Files")
+open_program("CMD")
+pyautogui.hotkey("win", "up")
