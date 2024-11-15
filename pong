@@ -16,14 +16,14 @@ paddleSize = 7
 lPaddleY = math.trunc((boardSizeY + 1) / 2)
 rPaddleY = math.trunc((boardSizeY + 1) / 2)
 
-
+winScore = 5
 
 #
 
 ballX = math.trunc(boardSizeX / 2)
 ballY = math.trunc(boardSizeY / 2)
 ballVelX = 2
-ballVelY = 1
+ballVelY = 0
 
 paddleSize = math.trunc(paddleSize / 2) + 1
 
@@ -81,7 +81,15 @@ while (True):
     if (ballY < 0): #wall bounce
         ballVelY = -ballVelY
         ballY = ballY + ballVelY
-        
+
+    #win condition
+    if (rScore > winScore):
+        print("\033[0;91mRed wins!\033[0m")
+        sys.exit(0)
+    if (lScore > winScore):
+       	print("\033[0;94mBlue wins!\033[0m")
+        sys.exit(0)
+
     #render part
     
     #right paddle
