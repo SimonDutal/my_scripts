@@ -33,13 +33,22 @@ rScore = 0
 
 #board = numpy.full((boardSizeX, boardSizeY), " ")
 
+if ("--clear" in set(sys.argv) or "-c" in set(sys.argv)):
+    isClearing = True
+else:
+    isClearing = False
+if ("--help" in set(sys.argv) or "-h" in set(sys.argv)):
+    print("Console pong\nControls :\n" + "\033[0;91m" + "z/s : move left paddle\n" + "\033[0;94m" +  "↑/↓ : move right paddle"  + "\033[0m" + "\nesc : exit game")
+    sys.exit(0);
+    
 while (True):
     
     board = numpy.full((boardSizeX, boardSizeY), " ")
 
     #input detection
     if (keyboard.is_pressed('esc')):
-        sys.exit(0)
+        print("exiting")
+        sys.exit(3)
     if (keyboard.is_pressed('s') and rPaddleY != boardSizeY - paddleSize):
         rPaddleY = rPaddleY + 1
     if (keyboard.is_pressed('z') and rPaddleY != paddleSize - 1):
@@ -56,7 +65,7 @@ while (True):
 
     #bouncing ball
     if (ballX >= boardSizeX - 2 and lPaddleY - paddleSize <= ballY and lPaddleY + paddleSize >= ballY): #l paddle bounce
-        ballVelX = ballVelX * -1.25
+        ballVelX = ballVelX * -1.2
         ballVelY = ballVelY + (ballY - lPaddleY) * 0.25
         ballX = ballX + ballVelX
     elif (ballX >= boardSizeX - 2): #l wall
@@ -66,7 +75,7 @@ while (True):
         ballVelY = 0
         rScore = rScore + 1
     if (ballX <= 0 and rPaddleY - paddleSize <= ballY and rPaddleY + paddleSize >= ballY): #r paddle bounce
-        ballVelX = ballVelX * -1.25
+        ballVelX = ballVelX * -1.2
         ballVelY = ballVelY + (ballY - rPaddleY) * 0.25
         ballX =	ballX +	ballVelX
     elif (ballX <= 0): #r wall
@@ -85,10 +94,10 @@ while (True):
     #win condition
     if (rScore > winScore):
         print("\033[0;91mRed wins!\033[0m")
-        sys.exit(0)
+        sys.exit(1)
     if (lScore > winScore):
        	print("\033[0;94mBlue wins!\033[0m")
-        sys.exit(0)
+        sys.exit(2)
 
     #render part
     
@@ -107,8 +116,9 @@ while (True):
     #ball
     board[round(ballX)][round(ballY)] = "o"
 
-    
-    buffer = "\n\n\nConsole pong   score : " + "\033[0;91m" + str(rScore) + "\033[0m" + " - " + "\033[0;94m" + str(lScore) + "\033[0m"
+    buffer = ""
+    buffer = "\n"
+    buffer = buffer + "Console pong   score : " + "\033[0;91m" + str(rScore) + "\033[0m" + " - " + "\033[0;94m" + str(lScore) + "\033[0m"
     buffer = buffer + "   move : z/s ↑/↓ exit : esc"
     
     buffer = buffer + "\n┌"
@@ -134,7 +144,9 @@ while (True):
         buffer = buffer + "─"
     buffer = buffer + "┘\n"
 
-    #os.system("clear")
+    if (isClearing):
+        os.system("clear")
+
     #print("")
     #print('\033[42A\033[2K', end='')
     print(buffer, end="\r")
