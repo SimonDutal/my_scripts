@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import random
+import os
 
-quotes = open("/home/simon/my_scripts/assets/splashes.txt", "r").read().splitlines(True)
+quotes = open(os.environ['HOME'] + "/my_scripts/assets/splashes.txt", "r").read().splitlines(True)
 print(quotes[random.randint(0, len(quotes) - 1)],end='')
