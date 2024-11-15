@@ -19,7 +19,6 @@ pouler-tabourer
 poulet
 push
 random
-README.md
 report_helper
 splash
 square
