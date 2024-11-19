@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import math
+import time
+import random
+import numpy
+import keyboard
+import curses
+
+#main func
+def main(stdscr):
+    
+    # initialisation
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+    curses.curs_set(0) #hide cursor
+    stdscr.clear()
+    stdscr.refresh()
+    
+    frame = 0
+
+    #main loop
+    while(True):
+        #exit key
+        if (keyboard.is_pressed('q')):
+            return
+        stdscr.clear()
+        frame += 1
+        for i in range(40):
+            stdscr.addstr(i, i, str(frame))
+        
+        
+        stdscr.refresh()
+        time.sleep(1/60) #~ 60FPS
+
+        #end of main loop
+
+
+curses.wrapper(main)
