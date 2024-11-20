@@ -9,32 +9,40 @@ import numpy
 import keyboard
 import curses
 
+#curses color https://www.colorhexa.com/color-names
+    
 #main func
 def main(stdscr):
-    
+
     # initialisation
     curses.noecho()
     curses.cbreak()
     stdscr.keypad(True)
     curses.curs_set(0) #hide cursor
+    curses.def_prog_mode()
     stdscr.clear()
     stdscr.refresh()
-    
+
+    curses.start_color()
+    #curses.use_default_colors()
+        
     frame = 0
 
     #main loop
     while(True):
-        #exit key
+        #exit key check
         if (keyboard.is_pressed('q')):
             return
-        stdscr.clear()
+
+        rows, cols = stdscr.getmaxyx()
         frame += 1
-        for i in range(40):
-            stdscr.addstr(i, i, str(frame))
         
-        
+        stdscr.clear()
+
+        stdscr.addstr("curses test window rows:" + str(rows)+" colums:"+str(cols)+" colors:"+str(curses.COLORS))
         stdscr.refresh()
-        time.sleep(1/60) #~ 60FPS
+        curses.flushinp()
+        time.sleep(1/2) #~ 30FPS
 
         #end of main loop
 

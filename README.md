@@ -6,7 +6,8 @@ clean - rm plein de trucs inutiles
 color - change la couleur du term et sert de liste de codes ANSI  
 commit - git pull ; git add. ; git commit arg1 ; git push  
 cow - la bonne fortune de la vache  
-CSAR - Coding Style Auto Check  
+CSAR - Coding Style Auto Check
+cursepy - example utilisation curses
 find_exclude - emacs exclude  
 find_include - emacs include  
 fixssh - ça régle mes problèmes de shh quand je suis en tty  
