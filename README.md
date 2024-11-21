@@ -6,8 +6,9 @@ clean - rm plein de trucs inutiles
 color - change la couleur du term et sert de liste de codes ANSI  
 commit - git pull ; git add. ; git commit arg1 ; git push  
 cow - la bonne fortune de la vache  
-CSAR - Coding Style Auto Check
-cursepy - example utilisation curses
+CSAR - Coding Style Auto Check  
+cursepy - example utilisation curses  
+devenv - macro pyautogui  
 find_exclude - emacs exclude  
 find_include - emacs include  
 fixssh - ça régle mes problèmes de shh quand je suis en tty  
@@ -20,10 +21,10 @@ poulet - poulet
 push - git add. ; git commit arg1 ; git push  
 random - cat dev/urandom  
 report_helper - regex sur le CSreport pour le rendre lisible  
-splash -  
+splash - uhhhh  
 square -  
 star - star  
-start -  
+start - macro pyautogui
 update_all - sudo apt-get update  
 wheel - wheel  
 Xmas - joyeux noel  
