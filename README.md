@@ -22,7 +22,7 @@ push - git add. ; git commit arg1 ; git push
 random - cat dev/urandom  
 report_helper - regex sur le CSreport pour le rendre lisible  
 splash - uhhhh  
-square -  
+square - entoure le texte donné quand un rectangle 
 star - star  
 start - macro pyautogui
 update_all - sudo apt-get update  
