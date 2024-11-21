@@ -12,7 +12,6 @@ devenv - macro pyautogui
 find_exclude - emacs exclude  
 find_include - emacs include  
 fixssh - ça régle mes problèmes de shh quand je suis en tty  
-mr_clean - rm plein de trucs inutiles  
 my_scripts_mover  
 pong - pong  
 pouler - le jeu du pouler  
@@ -30,5 +29,6 @@ wheel - wheel
 Xmas - joyeux noel  
 Xmas_tree - sapin de noel  
   
-assets  
-src  
+assets/  
+
+src/    

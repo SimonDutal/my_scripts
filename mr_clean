@@ -1,2 +1,0 @@
-#!/usr/bin/bash 
-find -type f -name "#*#" -delete -o -name "*~" -delete -o -name "a.out" -delete -o -name "*.gcno" -delete -o -name "*.gcda" -delete -o -name "*.o" -delete -o -name "*.a" -delete -o -name ".*.swp" -delete 
