@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+
+import sys
+import random
+
+#encrypt [text] [-flag] [text] [.mode] [.mode.mode]
+
+if (len(sys.argv) == 1):
+    print("use crypt -h for help")
+    exit(0)
+
+#varuables
+flag_help = False
+flag_quiet = False
+flag_verbose = False
+flag_debug = False
+flag_decrypt = False
+mode_text = ""
+mode = []
+text = ""
+old_text = ""
+buff = ""
+
+#parsing args
+args = sys.argv[1:]
+for i in (args):
+    if (i == '-h' or i == '--help'):
+        flag_help = True
+    elif (i == '-q' or i == '--quiet'):
+        flag_quiet = True
+    elif (i == '-v' or i == '--verbose'):
+        flag_verbose = True
+    elif (i == '-d' or i == '--debug'):
+        flag_debug = True
+    elif (i == '-D' or i == '--decrypt'):
+        flag_decrypt = True
+
+    elif (i[0] == '.'):
+        mode.append(i)
+        mode_text += i
+        
+    #if its no a flag or a mode, its just text
+    else:
+        if (text != ""):
+            text += " "
+        text += str(i)
+
+if (flag_verbose):
+    flag_quiet = False
+for i in range (len(mode)):
+    mode[i] = mode[i].split('.')
+mode = [a for b in mode for a in b]
+while "" in mode:
+    mode.remove("")
+for i in range (len(mode)):
+    mode[i] = mode[i].split(',')
+
+if (flag_help):
+    print("helpfull string")
+    exit(0)
+    
+if (flag_debug):
+    print("DEBUG - flags: help:" + str(flag_help) + " quiet:" + str(flag_quiet) + " verbose:" + str(flag_verbose) + " debug:" + str(flag_debug) + " decrypt:" + str(flag_decrypt))
+    print("DEBUG - mode: " + str(mode))
+    print("DEBUG - text: \"" + text + "\"")
+
+if (not flag_quiet and not flag_decrypt):
+    print("encrypting text \"" + text + "\" with mode " + mode_text)
+
+if (not flag_quiet and flag_decrypt):
+    print("decrypting text \"" + text + "\" with mode " + mode_text)
+
+#applying modes, will need to be redone at some point
+
+for i in (mode):
+    buff = ""
+    #cesar (shifting all char, so not precisely cesar's)
+    if (i[0] == "c" and not flag_decrypt):
+        for j in (text):
+            buff += chr(ord(j) + int(i[1]))
+        if (flag_verbose):
+            print(".Cesar's Cipher on all characters with " + i[1] + " shift")
+        text = buff
+    #cesar decrypt
+    if (i[0] == "c" and flag_decrypt):
+        for j in (text):
+            buff += chr(ord(j) - int(i[1]))
+        if (flag_verbose):
+            print(".Cesar's Cipher on all characters with " + i[1] + " shift")
+        text = buff
+    
+
+if (flag_quiet):
+    print(text)
+else:
+    print("result text is:\n" + text)
