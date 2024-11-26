@@ -3,7 +3,7 @@
 import sys
 import random
 
-#encrypt [text] [-flag] [text] [.mode] [.mode.mode]
+#crypt [text] [-flag] [text] [.mode] [.mode.mode]
 
 if (len(sys.argv) == 1):
     print("use crypt -h for help")
@@ -54,7 +54,8 @@ while "" in mode:
     mode.remove("")
 for i in range (len(mode)):
     mode[i] = mode[i].split(',')
-
+old_text = text
+    
 if (flag_help):
     print("helpfull string")
     exit(0)
@@ -91,6 +92,9 @@ for i in (mode):
     
 
 if (flag_quiet):
+    print(text)
+elif (flag_verbose):
+    print("result text is: (%.1f%% of original size)" % (len(text)/len(old_text)*100))
     print(text)
 else:
     print("result text is:\n" + text)
