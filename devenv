@@ -3,18 +3,42 @@
 import pyautogui
 import time
 
-pyautogui.write("make run", interval=0.05)
-pyautogui.hotkey("ctrl", "shift", "t")
-pyautogui.write("cd src", interval=0.05)
+pyautogui.write("ls", interval=0.01)
 pyautogui.press("enter")
+#
 pyautogui.hotkey("ctrl", "shift", "t")
+time.sleep(0.1)
+pyautogui.write("cd src ; ls", interval=0.01)
+pyautogui.press("enter")
+#
 pyautogui.hotkey("ctrl", "shift", "t")
+time.sleep(0.1)
+pyautogui.write("ls", interval=0.01)
+pyautogui.press("enter")
+#
+pyautogui.hotkey("ctrl", "shift", "t")
+time.sleep(0.1)
+pyautogui.write("ls", interval=0.01)
+pyautogui.press("enter")
+#
+pyautogui.hotkey("ctrl", "shift", "t")
+time.sleep(0.1)
 pyautogui.write("cd ")
 pyautogui.hotkey("shift", ".")
 pyautogui.hotkey("shift", ".")
-pyautogui.write(" ; find8include", interval=0.05)
+pyautogui.write(" ; clear ; find8include", interval=0.01)
 pyautogui.press("enter")
+#
 pyautogui.hotkey("ctrl", "shift", "t")
-pyautogui.write("CSAR -a -l", interval=0.05)
+time.sleep(0.1)
+pyautogui.write("emacs Makefile", interval=0.01)
 pyautogui.press("enter")
+#
+pyautogui.hotkey("ctrl", "shift", "t")
+time.sleep(0.1)
+pyautogui.write("CSAR -a -l", interval=0.01)
+pyautogui.press("enter")
+#
 pyautogui.hotkey("ctrl", "right")
+time.sleep(0.1)
+pyautogui.write("make run", interval=0.01)
