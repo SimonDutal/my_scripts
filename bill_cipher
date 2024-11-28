@@ -4,11 +4,18 @@ bw='\033[47m'
 by='\033[103m'
 y='\033[1;93m'
 b='\033[1;90m'
-echo -e "${bw}             ${y}_             ${re}"
+f='\033[1;94m'
+echo -e "${bw}            ${b} _             ${re}"
+echo -e "${bw}            ${b}| |            ${re}"
+echo -e "${bw}            ${b}| |            ${re}"
+echo -e "${bw}            ${b}| |            ${re}"
+echo -e "${bw}           ${b}_|_|_           ${re}"
 echo -e "${bw}            ${y}/ \\            ${re}"
 echo -e "${bw}           ${y}/   \\           ${re}"
-echo -e "${bw}          ${y}/     \\          ${re}"
-echo -e "${bw}   ${b}|     ${y}/ ${b}_____ ${y}\\     ${b}|   ${re}"
+echo -e "${bw}  ${f}/|\\     ${y}/     \\     ${f}/|\\  ${re}"
+echo -en "${bw}  ${f}\\"
+echo -en "${b}|${f}/    ${y}/ ${b}_____ ${y}\\    ${f}\\"
+echo -e "${b}|${f}/  ${re}"
 echo -e "${bw}   ${b}|    ${y}/ ${b}/  ╷  \\ ${y}\\    ${b}|   ${re}"
 echo -e "${bw}   ${b}|__ ${y}/  ${b}\\_____/  ${y}\\ ${b}__|   ${re}"
 echo -e "${bw}      ${y}/             ${y}\\      ${re}"
