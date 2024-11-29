@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 Color_Off='\033[0m'
 UWhite='\033[4;37m'
+a='\\'
+clear
 echo -e "après"
 echo -e "   ${UWhite}LE JEU DE LE POULER${Color_Off}                                                                                                                                 ___"
 echo -e "  regarde pas le pouler                                                                                                                                  /|"
@@ -9,7 +11,7 @@ echo -e "              MM                                                       
 echo -e "       |\\____/ \`>                                                                                                                           quitter le jeu"
 echo -e "        \\PERDUT/"
 echo -e "           ]["
-echo -e ""
+echo -e ","
 echo -e ""
 echo -e ""
 echo -e "Je présente ..."
@@ -20,12 +22,12 @@ echo -e "│   ├─      │ ├─  │ │   │ │ ├─    │   ├─ 
 echo -e "${UWhite}└─╴ └─╴   ╰─╯ └─╴ ╰─╯   └─╯ └─╴   └─╴ └─╴   ╵   ╰─╯ ╰─╯ └─╴ └─╴ ╵🮡    └─╯ └─╴${Color_Off}"
 echo -e "                            appuier sur les pouler"
 echo -e ""
-echo -e "P"
-echo -e "E                  ///              ///               ///"
-echo -e "R                 <' \\___/|        <' \\___/|         <' \\___/|"
-echo -e "D                   \\_  _/           \\_  _/            \\_  _/  "
-echo -e "U                     \\ \\              \\ \\               \\ \\"
-echo -e "T"
+echo -e "                                                                           |P"
+echo -e "                         \\ \\            \\ \\            \\ \\                 |E"
+echo -e "                    |\\___/ '>      |\\___/ '>      |\\___/ '>                |R"
+echo -e "                     \\_  _/         \\_  _/         \\_  _/                  |D"
+echo -e "                      / /            / /            / /                    |U"
+echo -e "                                                                           |T"
 echo -e ""
 echo -e	""
 echo -e	""
