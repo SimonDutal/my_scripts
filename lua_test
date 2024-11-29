@@ -1,0 +1,6 @@
+#!/usr/bin/env lua
+
+for i = 0, 10 do
+    print(i)
+end
+print("test")
