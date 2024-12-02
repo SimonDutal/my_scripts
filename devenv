@@ -36,7 +36,7 @@ pyautogui.press("enter")
 #
 pyautogui.hotkey("ctrl", "shift", "t")
 time.sleep(0.1)
-pyautogui.write("CSAR -a -l", interval=0.01)
+pyautogui.write("CSAR -a -l -v 1", interval=0.01)
 pyautogui.press("enter")
 #
 pyautogui.hotkey("ctrl", "right")
