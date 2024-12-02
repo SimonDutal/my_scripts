@@ -1,10 +1,11 @@
-#!/usr/bin/bash
+#!/usr/bin/env python3
 
-#CSAR Coding Style Auto Reporter
+import sys
+import os
+import time
 
 # Reset
 Color_Off='\033[0m'       # Text Reset
-
 # Regular Colors
 Black='\033[0;30m'        # Black
 Red='\033[0;31m'          # Red
@@ -14,7 +15,6 @@ Blue='\033[0;34m'         # Blue
 Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
-
 # Bold
 BBlack='\033[1;30m'       # Black
 BRed='\033[1;31m'         # Red
@@ -24,7 +24,6 @@ BBlue='\033[1;34m'        # Blue
 BPurple='\033[1;35m'      # Purple
 BCyan='\033[1;36m'        # Cyan
 BWhite='\033[1;37m'       # White
-
 # Underline
 UBlack='\033[4;30m'       # Black
 URed='\033[4;31m'         # Red
@@ -34,7 +33,6 @@ UBlue='\033[4;34m'        # Blue
 UPurple='\033[4;35m'      # Purple
 UCyan='\033[4;36m'        # Cyan
 UWhite='\033[4;37m'       # White
-
 # Background
 On_Black='\033[40m'       # Black
 On_Red='\033[41m'         # Red
@@ -44,7 +42,6 @@ On_Blue='\033[44m'        # Blue
 On_Purple='\033[45m'      # Purple
 On_Cyan='\033[46m'        # Cyan
 On_White='\033[47m'       # White
-
 # High Intensity
 IBlack='\033[0;90m'       # Black
 IRed='\033[0;91m'         # Red
@@ -54,7 +51,6 @@ IBlue='\033[0;94m'        # Blue
 IPurple='\033[0;95m'      # Purple
 ICyan='\033[0;96m'        # Cyan
 IWhite='\033[0;97m'       # White
-
 # Bold High Intensity
 BIBlack='\033[1;90m'      # Black
 BIRed='\033[1;91m'        # Red
@@ -75,84 +71,110 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
-if [[ "$*" == *"-l"* ]]; then
-    isloop=true
-fi
-if [[ "$*" == *"-a"* ]]; then
-    showall=true
-fi
+flag_help = False
+flag_quiet = False
+flag_verbose = False
+flag_debug = False
+flag_all = False
+flag_loop = False
+exclude_list = {".gcno", ".gcda", ".o", ".a"}
+refresh_delay = 10
 
-if [ "$isloop" = true ]; then
-    clear
-fi
-while true
-do
-    fatal=0
-    major=0
-    minor=0
-    info=0
-    total=0
-    echo -e "${Color_Off}Refreshing ..."
-    if [ "$isloop" = true ]; then
-        echo -en "${Black}"
-    fi
-    coding-style $PWD
-    report_helper
-    if [ "$isloop" = true ]; then
-        clear
-    fi
-    if [ "$showall" != true ]; then
-        echo -e "${Yellow}Errors coming from .a files, main.c, etc are ignored"
-    fi
-    echo -e "${Color_Off}coding style report :"
-    while read line; do
-        if [ "$showall" != true ]; then
-           if [[ $line =~ ".a" ]]; then
-               continue
-           fi
-           if [[ $line =~ ".o" ]]; then
-               continue
-           fi
-           if [[ $line =~ "main.c" ]]; then
-               continue
-           fi
-           if [[ $line =~ ".gcno" ]]; then
-               continue
-           fi
-           if [[ $line =~ ".gcda" ]]; then
-               continue
-           fi
-        fi
+args = sys.argv[1:]
+for i in (args):
+    if (i == '-h' or i == '--help'):
+        flag_help = True
+    elif (i == '-q' or i == '--quiet'):
+        flag_quiet = True
+    elif (i == '-v' or i == '--verbose'):
+        flag_verbose = True
+    elif (i == '-d' or i == '--debug'):
+        flag_debug = True
+    elif (i == '-a' or i == '--all'):
+        flag_all = True
+    elif (i == '-l' or i == '--loop'):
+        flag_loop = True
+    try:
+        refresh_delay = int(i)
+    except:
+        refresh_delay += 0 #very usefull except here
         
-    	if [[ $line =~ "FATAL" ]]; then
-           echo	-en ${Red}
-           fatal=$((fatal+1))
-        fi
-        if [[ $line =~ "MAJOR" ]]; then
-           echo -en ${Red}
-           major=$((major+1))
-        fi
- 	if [[ $line =~ "MINOR" ]]; then
-           echo	-en ${IYellow}
-           minor=$((minor+1))
-        fi
-      	if [[ $line =~ "INFO" ]]; then
-           echo	-en ${Cyan}
-           info=$((info+1))
-        fi
-        echo $line
-    done < coding-style-reports.log
-    total=$((fatal+major+minor+info))
-    echo -en "${Color_Off}you have ${IRed}$fatal FATALs${Color_Off}, ${Red}$major MAJORs${Color_Off}, ${IYellow}$minor MINORs${Color_Off}, ${Cyan}$info INFOs${Color_Off}, $total total."
-    if (($fatal >= 1 || $major >= 1 || $minor >= 3)) ; then
-        echo -e " The tests will ${Red}not pass."
-    else
-        echo -e " The tests ${Green}should pass."
-    fi
-    echo -en "${Color_Off}"
-    if [[ "$isloop" == true ]]; then
-        sleep 1
-    else
-        break 1
-    fi
-done
+if (flag_verbose):
+    flag_quiet = False
+
+if (flag_help):
+    print("Usage : CSAR [OPTION]")
+    print("Automatically run coding style checks and display them in a legible way.")
+    print("flag list:")
+    print("  -a, --all             do not ingore common error souce files such a \".gcda\" or \".a\" files.")
+    print("  -d, --debug           debug mode.")
+    print("  -h, --help            display this help and exit instead of the normal function.")
+    print("  -l, --loop            constantly update the report instead of quitting.")
+    print("  -q, --quiet           say less things.")
+    print("  -v, --verbose         say more things.")
+    print("  [ANY INTEGER]         the refresh delay when looping in seconds (default is 5).")
+    print("use \"CSAR -l -a -v 1\" to have the classic function")
+    exit(0)
+
+if (flag_loop):
+    os.system('clear')
+
+while True:
+    nfatal = 0
+    nmajor = 0
+    nminor = 0
+    ninfo = 0
+    ntotal = 0
+
+    if (flag_debug):
+        print(refresh_delay)
+    
+    if (not flag_quiet):
+        if (flag_loop):
+            print(Color_Off + "Refreshing ..." + Black)
+        else:
+            print(Color_Off + "Refreshing ...")
+    else:
+        print(Black)
+    os.system("coding-style .")
+    os.system("~/my_scripts/report_helper ")
+    if (flag_loop):
+        os.system("clear")
+    if (not flag_quiet):
+        if (not flag_all):
+            print(Color_Off + "coding style report :" + Yellow + "                     (Errors coming from .gcda or .a files, etc are ignored)" + Color_Off)
+        else:
+            print(Color_Off + "coding style report :")
+
+    with open("coding-style-reports.log", "r") as file:
+        for line in file:
+            if (not any(x in line for x in exclude_list) or flag_all):
+                if "FATAL" in line:
+                    print(Red + line, end = "")
+                    nfatal += 1
+                elif "MAJOR" in line:
+                    print(Red + line, end = "")
+                    nmajor += 1
+                elif "MINOR" in line:
+                    print(IYellow + line, end = "")
+                    nminor += 1
+                elif "INFO" in line:
+                    print(Cyan + line, end = "")
+                    ninfo += 1
+                else:
+                    print(Color_Off + line, end = "")
+
+    if (not flag_quiet):
+        ntotal = nfatal + nmajor + nminor + ninfo
+        print(Color_Off + "you have " + IRed + str(nfatal) + " FATALs" + Color_Off + ", " + Red + str(nmajor) +  " MAJORs" + Color_Off + ", " + IYellow + str(nminor) + " MINORs" + Color_Off + ", " + Cyan + str(ninfo) + " INFOs" + Color_Off + ", " + str(ntotal) + " total.", end = "")
+        if (flag_verbose):
+            if (nfatal >= 1 or nmajor >= 1 or nminor >= 3):
+                print(" The tests " + Red + "won't pass.")
+            else:
+                print(" The tests " + Green + "should pass.")
+        else:
+            print()
+
+    if (not flag_loop):
+        break
+    time.sleep(refresh_delay)

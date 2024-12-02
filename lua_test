@@ -1,6 +1,17 @@
 #!/usr/bin/env lua
 
-for i = 0, 10 do
-    print(i)
+io.write("hello world\n")
+
+print("argument list:")
+for i=0, #arg do
+    print(arg[i])
 end
-print("test")
+if #arg == 1 then
+   print("there is 1 argument.")
+else
+   print(string.format("there are %i arguments.", #arg)) 
+end
+print("for some reason the exec path is not counted")
+print("lenght the {\"test1\",\"test2\"} table:")
+a = {"test1","test2"}
+print(#a)
