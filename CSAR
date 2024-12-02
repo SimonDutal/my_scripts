@@ -164,8 +164,14 @@ while True:
                 else:
                     print(Color_Off + line, end = "")
 
+
+    ntotal = nfatal + nmajor + nminor + ninfo
+    if (ntotal == 0):
+        print(Color_Off + "           MM")
+        print("    |\\____/ \`>")
+        print("     \\GAGNER/")
+        print("        ][")
     if (not flag_quiet):
-        ntotal = nfatal + nmajor + nminor + ninfo
         print(Color_Off + "you have " + IRed + str(nfatal) + " FATALs" + Color_Off + ", " + Red + str(nmajor) +  " MAJORs" + Color_Off + ", " + IYellow + str(nminor) + " MINORs" + Color_Off + ", " + Cyan + str(ninfo) + " INFOs" + Color_Off + ", " + str(ntotal) + " total.", end = "")
         if (flag_verbose):
             if (nfatal >= 1 or nmajor >= 1 or nminor >= 3):
