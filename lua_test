@@ -1,6 +1,60 @@
 #!/usr/bin/env lua
 
-io.write("hello world\n")
+array = {"lua", "programming"}
+for i=1,2 do
+    print(array[i])
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--[[io.write("hello world\n")
 
 print("argument list:")
 for i=0, #arg do
@@ -14,4 +68,4 @@ end
 print("for some reason the exec path is not counted")
 print("lenght the {\"test1\",\"test2\"} table:")
 a = {"test1","test2"}
-print(#a)
+print(#a)]]--
