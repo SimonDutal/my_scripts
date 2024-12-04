@@ -5,7 +5,6 @@ bill_cipher - bill cipher
 cha - le jeu de le cha  
 clean - rm plein de trucs inutiles  
 color - change la couleur du term et sert de liste de codes ANSI  
-commit - git pull ; git add. ; git commit arg1 ; git push  
 cow - la bonne fortune de la vache  
 CSAR - Coding Style Auto Check  
 CSAR_old - l'ancien CSAR fait avec du bash  
@@ -21,8 +20,9 @@ my_scripts_mover - déplacement vers ~/my_scripts
 pong - pong  
 pouler - le jeu du pouler  
 pouler-tabourer - le jeu du pouler-tabourer  
-poulet - poulet  
-push - git add. ; git commit arg1 ; git push  
+poulet - poulet
+pullpushall - git pull ; git add . ; git commit -m arg1 ; git push  
+pushall - git add. ; git commit -m arg1 ; git push  
 random - cat dev/urandom  
 report_helper - regex sur le CSreport pour le rendre lisible  
 splash - uhhhh  

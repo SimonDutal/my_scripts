@@ -1,3 +1,4 @@
 export PATH="~/my_scripts:$PATH"
 alias my_scripts='. my_scripts_mover'
-#alias pong="sudo ~/my_scripts/pong" 
+alias pong="sudo ~/my_scripts/pong" 
+alias push='pushall'
