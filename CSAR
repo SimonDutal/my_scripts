@@ -122,9 +122,9 @@ if (flag_verbose):
     flag_quiet = False
 
 if (flag_help):
-    print("Usage : CSAR [OPTION]")
+    print("Usage : CSAR [OPTION]... [REFRESH RATE]")
     print("Coding Style Auto Reporter: automatically run coding style checks and display them in a legible way.")
-    print("flag list:")
+    print("options list:")
     print("  -a, --all             do not ingore common error souce files such a \".gcda\" or \".a\" files.")
     print("  -d, --debug           debug mode.")
     print("  -h, --help            display this help and exit instead of the normal function.")
@@ -132,7 +132,7 @@ if (flag_help):
     print("  -q, --quiet           say less things.")
     print("  -r, --remove          remove coding-style-report.log before closing/looping")
     print("  -v, --verbose         say more things.")
-    print("  [ANY INTEGER]         the refresh delay when looping in seconds (default is 5).")
+    print("  [REFRSH RATE]         nay interger the refresh delay when looping in seconds (default is 5).")
     print("use \"CSAR -l -a -v 1\" to have the classic function")
     exit(0)
 
@@ -206,3 +206,5 @@ while True:
     if (flag_remove):
         os.remove("coding-style-reports.log")
     time.sleep(refresh_delay)
+
+exit(ntotal)
