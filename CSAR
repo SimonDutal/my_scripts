@@ -78,6 +78,7 @@ flag_verbose = False
 flag_debug = False
 flag_all = False
 flag_loop = False
+flag_remove = False
 exclude_list = {".gcno", ".gcda", ".o", ".a", "a.out"}
 refresh_delay = 10
 
@@ -96,18 +97,22 @@ for i in (args):
                 flag_all = True
             if 'l' in i:
                 flag_loop = True
-    elif (i == '-h' or i == '--help'):
+            if 'r' in i:
+                flag_remove = True
+    elif (i == '--help'):
         flag_help = True
-    elif (i == '-q' or i == '--quiet'):
+    elif (i == '--quiet'):
         flag_quiet = True
-    elif (i == '-v' or i == '--verbose'):
+    elif (i == '--verbose'):
         flag_verbose = True
-    elif (i == '-d' or i == '--debug'):
+    elif (i == '--debug'):
         flag_debug = True
-    elif (i == '-a' or i == '--all'):
+    elif (i == '--all'):
         flag_all = True
-    elif (i == '-l' or i == '--loop'):
+    elif (i == '--loop'):
         flag_loop = True
+    elif (i == '--remove'):
+        flag_remove = True
     try:
         refresh_delay = int(i)
     except:
@@ -125,6 +130,7 @@ if (flag_help):
     print("  -h, --help            display this help and exit instead of the normal function.")
     print("  -l, --loop            constantly update the report instead of quitting.")
     print("  -q, --quiet           say less things.")
+    print("  -r, --remove          remove coding-style-report.log before closing/looping")
     print("  -v, --verbose         say more things.")
     print("  [ANY INTEGER]         the refresh delay when looping in seconds (default is 5).")
     print("use \"CSAR -l -a -v 1\" to have the classic function")
@@ -164,7 +170,7 @@ while True:
         for line in file:
             if (not any(x in line for x in exclude_list) or flag_all):
                 if "FATAL" in line:
-                    print(Red + line, end = "")
+                    print(IRed + line, end = "")
                     nfatal += 1
                 elif "MAJOR" in line:
                     print(Red + line, end = "")
@@ -197,4 +203,6 @@ while True:
 
     if (not flag_loop):
         break
+    if (flag_remove):
+        os.remove("coding-style-reports.log")
     time.sleep(refresh_delay)
