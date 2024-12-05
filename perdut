@@ -1,0 +1,10 @@
+#!/usr/bin/bash                                                                                                                                                                               
+Color_Off='\033[0m'
+UWhite='\033[4;37m'
+echo -e "   ${UWhite}LE JEU DE LE PERDUT${Color_Off}"
+echo -e "       ne pert pas"
+echo -e ""
+echo -e "        ┌──────┐"
+echo -e "        │PERDUT│"
+echo -e "        └──────┘"
+echo -e ""
