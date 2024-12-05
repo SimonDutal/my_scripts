@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
-#!/usr/bin/env python3
-
-#Codinng Style Auto Reporter
+#Codinng Style Auto Fixer
 
 import sys
 import os
-import time
 
 # Reset
 Color_Off='\033[0m'       # Text Reset
@@ -81,6 +78,12 @@ flag_debug = False
 flag_recursive = False
 flag_manual_target = False
 target_list = []
+target_dir_list = []
+tfatal = 0
+tmajor = 0
+tminor = 0
+tinfo = 0
+ttotal = 0
 
 args = sys.argv[1:]
 for i in (args):
@@ -113,30 +116,95 @@ if (flag_verbose):
     flag_quiet = False
 
 if (flag_help):
-    print("Usage : CSAF [OPTION] [TARGET]")
+    print("Usage : CSAF [OPTION]... [TARGET]...")
     print("Coding Style Auto Fixer: automatically fix some coding style errors.")
-    print("flag list:")
+    print("options list:")
     print("  -d, --debug           debug mode.")
     print("  -h, --help            display this help and exit instead of the normal function.")
     print("  -q, --quiet           say less things.")
     print("  -r, --recursive       work in directories and their contents recursively.")
     print("  -v, --verbose         say more things.")
     print("  [TARGET]              target (such as main.c) or entire directories (such as src)")
-    #print("use \"CSAR -l -a -v 1\" to have the classic function") #imma remake this at some point
+    #print("use \"CSAR -l -a -v 1\" to have the classic function") #imma remake this for CSAF at some point
     exit(0)
 
+if (flag_debug):
+    print("DEBUG mode active")
+
+if (not flag_quiet):
+    print(Color_Off + "scanning ...")
+
 for i in range(len(target_list)-1, -1, -1):
-    if (not target_list[i].endswith(".c") and not os.path.isdir(target_list[i])):
-        print("\""+target_list[i]+"\" is not a valid target.")
+    if (os.path.isdir(target_list[i])):
+        target_dir_list.append(target_list[i])
+        target_list.pop(i)
+        continue
+    if (not target_list[i].endswith(".c")):
+        if (not flag_quiet):
+            print("\""+target_list[i]+"\" is not a valid target.")
         target_list.pop(i)
         continue
     if (not os.path.exists(target_list[i])):
-        print("\""+target_list[i]+"\" does not exist.")
+        if (not flag_quiet):
+            print("\""+target_list[i]+"\" does not exist.")
         target_list.pop(i)
         continue
-        
+    
 if (len(target_list) == 0 and flag_manual_target == False): #if no target specified we scan all valid files in current folder
     target_list = os.listdir(".")
-        
-print(str(target_list))
+    for i in range(len(target_list)-1, -1, -1):
+        if (os.path.isdir(target_list[i])):
+            target_dir_list.append(target_list[i]) #we do need this
+            target_list.pop(i)
+            continue
+        if (not target_list[i].endswith(".c")):
+            target_list.pop(i)
+            continue
+        if (not os.path.exists(target_list[i])):
+            target_list.pop(i)
+            continue
 
+while(i < len(target_dir_list) and (flag_manual_target or flag_recursive)):
+    target_list += [target_dir_list[i]+"/"+x for x in os.listdir(target_dir_list[i])]
+    for j in range(len(target_list)-1, -1, -1):
+        if (os.path.isdir(target_list[j])):
+            if (flag_recursive):
+                target_dir_list.append(target_list[j])
+            target_list.pop(j)
+            continue
+        if (not target_list[j].endswith(".c")):
+            target_list.pop(j)
+            continue
+        if (not os.path.exists(target_list[j])):
+            target_list.pop(j)
+            continue
+    i = i + 1
+
+if (flag_debug):
+    print("DEBUG-target list:"+str(target_list))
+    print("DEBUG-target dir list:"+str(target_dir_list))
+
+for i in range(len(target_list)):
+    nfatal = 0
+    nmajor = 0
+    nminor = 0
+    ninfo = 0
+    if (not flag_quiet):
+        print(f'{target_list[i]+":": <30}', end ="")
+    #logic
+
+    ntotal = nfatal + nmajor + nminor + ninfo
+    if (not flag_quiet):
+        print(Color_Off+" fixed "+IRed+str(nfatal)+" FATALs"+Color_Off+", "+Red+str(nmajor)+" MAJORs"+Color_Off+", "+IYellow + str(nminor)+" MINORs"+Color_Off+", "+Cyan+str(ninfo)+" INFOs"+Color_Off+", "+str(ntotal)+" total.")
+    tfatal += nfatal
+    tmajor += nmajor
+    tminor += nminor
+    tinfo +=  ninfo
+    ttotal += ntotal
+
+
+
+if (flag_verbose):
+    print("╶──────────────────────────────────────────────────────────────────────────────────╴")
+    print(Color_Off+"                               total "+IRed+str(tfatal)+" FATALs"+Color_Off+", "+Red+str(tmajor)+" MAJORs"+Color_Off+", "+IYellow + str(tminor)+" MINORs"+Color_Off+", "+Cyan+str(tinfo)+" INFOs"+\
+Color_Off+", "+str(ttotal)+" total.")
