@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import os
+import pyautogui
+import time
+
+dir = os.getcwd()
+
+#default profile
+if (dir.endswith("my_scripts")):
+    pyautogui.click(1775, 50)  #menu
+    pyautogui.click(1775, 245) #profiles
+    pyautogui.click(1775, 355) #default profile
+    pyautogui.click(200, 200)  #click away
+    
+#light blue trans
+elif (dir.endswith("noshare")):
+    pyautogui.click(1775, 50)
+    pyautogui.click(1775, 245)
+    pyautogui.click(1775, 325)
+    pyautogui.click(200, 200)
+
+#dark grey
+elif "delivery" in dir:
+    pyautogui.click(1775, 50)
+    pyautogui.click(1775, 245)
+    pyautogui.click(1775, 255)
+    pyautogui.click(200, 200)

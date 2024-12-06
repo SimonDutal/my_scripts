@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
 import pyautogui
+import sys
 import time
+
+if (len(sys.argv) == 2):
+    try:
+        time.sleep(float(sys.argv[1]))
+    except:
+        time.sleep(5)
 
 print(str(pyautogui.position()))
