@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+
+import pyautogui
+import time
+
+print(str(pyautogui.position()))
