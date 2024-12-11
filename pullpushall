@@ -6,7 +6,7 @@ exit 1
 fi
 git pull
 echo "pushing with commit name '$1'"
-mr_clean
+clean
 git add .
 git commit -m "'$@'"
 git push
