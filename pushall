@@ -7,5 +7,5 @@ fi
 echo "pushing with commit name '$1'"
 clean
 git add .
-git commit -m "'$@'"
+git commit -m "$@"
 git push
