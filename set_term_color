@@ -20,9 +20,17 @@ elif (dir.endswith("noshare")):
     pyautogui.click(1775, 325)
     pyautogui.click(200, 200)
 
+#dark red
+elif "B-MAT-100" in dir:
+    pyautogui.click(1775, 50)
+    pyautogui.click(1775, 245)
+    pyautogui.click(1775, 275)
+    pyautogui.click(200, 200)    
+    
 #dark grey
 elif "delivery" in dir:
     pyautogui.click(1775, 50)
     pyautogui.click(1775, 245)
     pyautogui.click(1775, 255)
     pyautogui.click(200, 200)
+
