@@ -36,14 +36,20 @@ def main(stdscr):
 
         rows, cols = stdscr.getmaxyx()
         frame += 1
-        
-        stdscr.clear()
 
-        stdscr.addstr("curses test window rows:" + str(rows)+" colums:"+str(cols)+" colors:"+str(curses.COLORS))
+        if (frame == 1):
+            stdscr.clear()
+
+        
+        stdscr.addstr(0,0,"curses test window rows:" + str(rows)+" colums:"+str(cols)+" colors:"+str(curses.COLORS))
+        stdscr.addstr("\n"+str(frame))
+        stdscr.addstr("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        stdscr.addstr("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        stdscr.addstr("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         stdscr.refresh()
         curses.flushinp()
-        time.sleep(1/2) #~ 30FPS
-
+        time.sleep(1/60) # ~60FPS
+        
         #end of main loop
 
 
