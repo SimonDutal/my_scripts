@@ -77,6 +77,8 @@ flag_verbose = False
 flag_debug = False
 flag_recursive = False
 flag_manual_target = False
+flag_return_value = False
+flag_count = False
 target_list = []
 target_dir_list = []
 tfatal = 0
@@ -98,6 +100,8 @@ for i in (args):
             flag_debug = True
         if 'r' in i:
             flag_recursive = True
+        if 'c' in i:
+            flag_count = True
     elif (i == '--help'):
         flag_help = True
     elif (i == '--quiet'):
@@ -108,6 +112,10 @@ for i in (args):
         flag_debug = True
     elif (i == '--recursive'):
         flag_recursive = True
+    elif (i == '--return-value'):
+        flag_return_value = True
+    elif (i == '--count'):
+        flag_count = True
     else: #if its no a flag its a target
         target_list.append(i)
         flag_manual_target = True
@@ -119,12 +127,14 @@ if (flag_help):
     print("Usage : CSAF [OPTION]... [TARGET]...")
     print("Coding Style Auto Fixer: automatically fix some coding style errors.")
     print("options list:")
+    print("  -c, --count           only count errors and dont fix them.")
     print("  -d, --debug           debug mode.")
     print("  -h, --help            display this help and exit instead of the normal function.")
     print("  -q, --quiet           say less things.")
     print("  -r, --recursive       work in directories and their contents recursively.")
+    print("      --return-value    return the number of fixed/found errors instead of 0.")
     print("  -v, --verbose         say more things.")
-    print("  [TARGET]              target (such as main.c) or entire directories (such as src)")
+    print("  [TARGET]              target (such as main.c) or directories (such as src).")
     #print("use \"CSAR -l -a -v 1\" to have the classic function") #imma remake this for CSAF at some point
     exit(0)
 
@@ -181,30 +191,262 @@ while(i < len(target_dir_list) and (flag_manual_target or flag_recursive)):
     i = i + 1
 
 if (flag_debug):
-    print("DEBUG-target list:"+str(target_list))
-    print("DEBUG-target dir list:"+str(target_dir_list))
+    print("DEBUG:target list:"+str(target_list))
+    print("DEBUG:target dir list:"+str(target_dir_list))
 
-for i in range(len(target_list)):
+if (len(target_list) == 0):
+    print("found nothing, are you sure you did it right? use CSAF -h.")
+    exit(0)
+
+#for each target
+for j in range(len(target_list)):
     nfatal = 0
     nmajor = 0
     nminor = 0
     ninfo = 0
-    if (not flag_quiet):
-        print(f'{target_list[i]+":": <30}', end ="")
-    #logic
+    in_single_line_comment = False
+    in_multi_line_comment = False
+    string_lenght = -1
+    in_string = False
 
-    ntotal = nfatal + nmajor + nminor + ninfo
+    #display info
     if (not flag_quiet):
-        print(Color_Off+" fixed "+IRed+str(nfatal)+" FATALs"+Color_Off+", "+Red+str(nmajor)+" MAJORs"+Color_Off+", "+IYellow + str(nminor)+" MINORs"+Color_Off+", "+Cyan+str(ninfo)+" INFOs"+Color_Off+", "+str(ntotal)+" total.")
+        if (len(target_list[j]) > 38):
+            print(f'{"..."+target_list[j][-35:]+":": <40}', end = "")
+        else:
+            print(f'{target_list[j]+":": <40}', end = "")
+
+    #read file
+    file = open(os.getcwd() + "/" + target_list[j], "r")
+    buff = file.read()
+    file.close()
+
+    if (flag_debug):
+        print("\nDEBUG:printing the file:")
+
+    i = 0
+    #parsing the file
+    while (i < len(buff)):
+        if (in_string):
+            string_lenght = string_lenght + 1
+        
+        #strings detection
+        if (buff[i] == '"' and buff[i-1] != '\\' and not in_string and not in_single_line_comment and not in_multi_line_comment): #string start
+            in_string = True
+            string_lenght = 0
+        if (buff[i-1] == '"' and string_lenght > 1 and buff[i-1] != '\\' and in_string and not in_single_line_comment and not in_multi_line_comment): #tring end
+            in_string = False
+            string_lenght = 0
+        #single line comment detection
+        if ((buff[i] == '/' and buff[i+1] == '/') and not in_single_line_comment and not in_multi_line_comment and not in_string):
+            in_single_line_comment = True
+        elif ((buff[i] == '\n') and in_single_line_comment and not in_multi_line_comment and not in_string):
+            in_single_line_comment = False
+        #multi line comment detection
+        if ((buff[i] == '/' and buff[i+1] == '*') and not in_multi_line_comment and not in_single_line_comment and not in_string):
+            in_multi_line_comment = True
+        elif ((buff[i-2] == '*' and buff[i-1] == '/') and in_multi_line_comment and not in_single_line_comment and not in_string):
+            in_multi_line_comment = False
+    
+        #code fixing logic here
+        if (not (in_string or in_single_line_comment or in_multi_line_comment)):
+            #L2 tabs
+            if (buff[i] == '\t'):
+                if (not flag_count):
+                    buff = buff[:i] + '        ' + buff[i+1:]
+                nminor = nminor + 1
+            if (buff[i] == '\n'):
+                in_tab = True
+            elif (buff[i] != ' '):
+                in_tab = False
+                
+            #more TODO (amount of spaces)
+            #L3 spaces
+            # = sign, assignement and equality test
+            if (buff[i] == '='):
+                if (not (buff[i+1] == '=' or buff[i+1] == ' ')):
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (not (buff[i-1] == '=' or buff[i-1] == ' ')):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1
+            # * sign, multiplication and pointer derefencing
+            if (buff[i] == '*'):
+                #TODO : need to find a way to differenciate between multiplication and pointer deref
+                if (buff[i-1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1
+            # % sign, modulosisation
+            if (buff[i] == '%'):
+                if (buff[i+1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (buff[i-1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1
+            # / sign, division
+            if (buff[i] == '/'):
+                if (buff[i+1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (buff[i-1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1          
+            # + sign, addition and incrementation
+            if (buff[i] == '+'):
+                if (not (buff[i+1] == '+' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ')): 
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (not (buff[i-1] == '+' or buff[i-1] == ' ') and buff[i+1] != '+'):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1
+                if (buff[i-1] == ' ' and buff[i+1] == '+'):
+                    if (not flag_count):
+                        buff = buff[:i-1] + buff[i:]
+                        i -= 1
+                    nminor = nminor + 1
+            # - sign, substraction and decrementation
+            if (buff[i] == '-'):
+                if (not (buff[i+1] == '-' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ')):
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (not (buff[i-1] == '-' or buff[i-1] == ' ') and buff[i+1] != '-'):
+                    if (not flag_count):
+                        buff = buff[:i] + ' ' + buff[i:]
+                    nminor = nminor + 1
+                if (buff[i-1] == ' ' and buff[i+1] == '-'):
+                    if (not flag_count):
+                        buff = buff[:i-1] + buff[i:]
+                        i -= 1
+                    nminor = nminor + 1
+            # , sign, comma
+            if (buff[i] == ','):
+                if (buff[i+1] != ' '):
+                    if (not flag_count):
+                        buff = buff[:i+1] + ' ' + buff[i+1:]
+                    nminor = nminor + 1
+                if (buff[i-1] == ' '):
+                    if (not flag_count):
+                        buff = buff[:i-1] + buff[i:]
+                    nminor = nminor + 1
+            # ; sign ,end of statement (and for loops)
+            if (buff[i] == ';'):
+                if (buff[i-1] == ' '):
+                    if (not flag_count):
+                        buff = buff[:i-1] + buff[i:]
+                        i -= 1
+                    nminor = nminor + 1
+            # (
+            if (buff[i] == '('):
+                if (buff[i+1] == ' '):
+                    if (not flag_count):
+                        buff = buff[:i+1] + buff[i+2:]
+                    nminor = nminor + 1
+            if (buff[i] == ')'):
+                if (buff[i-1] == ' '):
+                    if (not flag_count):
+                        buff = buff[:i-1] + buff[i:]
+                    nminor = nminor + 1
+            #correct amount of spaces
+            if ((buff[i] == ' ' and buff[i+1] == ' ') and not in_tab):
+                if (not flag_count):
+                    buff = buff[:i] + buff[i+1:]
+                nminor = nminor + 1
+            
+
+            
+            #G7 trailing spaces
+            #G8 leading/trailing lines
+            #L1 line code content
+            #L6 blank lines
+            #F6 function without params
+            #G1 file header
+            #L4 curly brackets
+            
+        #debug print file
+        if (flag_debug):
+            if (in_single_line_comment):
+                print(Red,end="")
+            elif (in_multi_line_comment):
+                print(IRed,end="")
+            elif (in_string):
+                print(Yellow,end="")
+            elif (in_tab):
+                print(Green,end="")
+            else:
+                print(Color_Off,end="")
+            print(buff[i],end="")
+
+        i = i + 1
+    #end of text parsing loop
+            
+    ntotal = nfatal + nmajor + nminor + ninfo
+
+    #write to file
+    if (ntotal != 0):
+        file = open(os.getcwd() + "/" + target_list[j], "w")
+        file.write(buff)
+        file.close()
+
+    #display info
+    if (not flag_quiet):
+        if (flag_count):
+            print(Color_Off+"counted", end = "")
+        else:
+            print(Color_Off+"  fixed", end = "")
+        if (nfatal != 0):
+            print(IRed,end="")
+        else:
+            print(Color_Off,end="")
+        print(f"{nfatal:>3}"+" FATALs"+Color_Off+",",end="")
+        if (nmajor != 0):
+            print(Red,end="")
+        else:
+            print(Color_Off,end="")
+        print(f"{nmajor:>3}"+" MAJORs"+Color_Off+",",end="")
+        if (nminor != 0):
+            print(IYellow,end="")
+        else:
+            print(Color_Off,end="")
+        print(f"{nminor:>3}"+" MINORs"+Color_Off+",",end="")
+        if (ninfo != 0):
+            print(Cyan,end="")
+        else:
+            print(Color_Off,end="")
+        print(f"{ninfo:>3}"+" INFOs"+Color_Off+",",end="")
+        print(Color_Off+f"{ntotal:>3}"+" total.")
     tfatal += nfatal
     tmajor += nmajor
     tminor += nminor
     tinfo +=  ninfo
     ttotal += ntotal
 
-
+#end of files loop
 
 if (flag_verbose):
-    print("╶──────────────────────────────────────────────────────────────────────────────────╴")
-    print(Color_Off+"                               total "+IRed+str(tfatal)+" FATALs"+Color_Off+", "+Red+str(tmajor)+" MAJORs"+Color_Off+", "+IYellow + str(tminor)+" MINORs"+Color_Off+", "+Cyan+str(tinfo)+" INFOs"+\
-Color_Off+", "+str(ttotal)+" total.")
+    print(Color_Off+"╶──────────────────────────────────────────────────────────────────────────────────────────────────╴")
+    print(Color_Off+"                                          total"+IRed+f"{tfatal:>3}"+" FATALs"+Color_Off+","+Red+f"{tmajor:>3}"+" MAJORs"+Color_Off+","+IYellow+f"{tminor:>3}"+" MINORs"+Color_Off+","+Cyan+f"{tinfo:>3}"+" INFOs"+Color_Off+","+f"{ttotal:>3}"+" total.")
+
+if (flag_return_value == True):
+    exit(ttotal)
+
+
+    #L2
+    #L3
+    #G7
+    #G8
+    #L1 partiellement
+    #L6
+    #F6
+    #G1 partiellement
+    #L4 partiellement
