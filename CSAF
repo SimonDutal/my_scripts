@@ -264,14 +264,15 @@ for j in range(len(target_list)):
         elif ((buff[i] == '\n') and not in_multi_line_comment and not in_single_line_comment and not in_string and in_preprocessor and not in_char):
             in_preprocessor = False
 
+        #code fixing logic here
+
         #G1 file header
         if (i == 0 and not (buff[i] == '/' and buff[i+1] == '*')):
             if (not flag_count):
                 buff = "/*\n** EPITECH PROJECT, 2024\n** NAME\n** File description:\n** DESCRIPTION\n*/\n" + buff
                 in_multi_line_comment = True
             nminor += 1
-        
-        #code fixing logic here
+
         if (not (in_string or in_single_line_comment or in_multi_line_comment or in_preprocessor or in_char)):
             #L2 tabs
             if (buff[i] == '\t'):
@@ -417,6 +418,11 @@ for j in range(len(target_list)):
                 nminor += 1
                 
             #L1 line code content
+            if (buff[i] == ';' and not (buff[i+1] == '\n' or buff[i+1] == ' ')):
+                if (not flag_count):
+                    buff = buff[:i+1] + "\n" + " "*tab_len + buff[i+1:]
+                    i += 1 + tab_len
+                nminor += 1
             #L6 blank lines
             #F6 function without params
             #L4 curly brackets
