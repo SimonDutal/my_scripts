@@ -208,6 +208,10 @@ for j in range(len(target_list)):
     in_multi_line_comment = False
     string_lenght = -1
     in_string = False
+    in_char = False
+    in_preprocessor = False
+    in_tab = False
+    tab_len = 0
 
     #display info
     if (not flag_quiet):
@@ -227,29 +231,48 @@ for j in range(len(target_list)):
     i = 0
     #parsing the file
     while (i < len(buff)):
-        if (in_string):
+        if (in_string or in_char):
             string_lenght = string_lenght + 1
-        
+
         #strings detection
-        if (buff[i] == '"' and buff[i-1] != '\\' and not in_string and not in_single_line_comment and not in_multi_line_comment): #string start
+        if ((buff[i] == '"') and buff[i-1] != '\\' and not in_string and not in_single_line_comment and not in_multi_line_comment and not in_preprocessor and not in_char): #string start
             in_string = True
             string_lenght = 0
-        if (buff[i-1] == '"' and string_lenght > 1 and buff[i-1] != '\\' and in_string and not in_single_line_comment and not in_multi_line_comment): #tring end
+        if ((buff[i-1] == '"') and string_lenght > 1 and buff[i-1] != '\\' and in_string and not in_single_line_comment and not in_multi_line_comment and not in_preprocessor and not in_char): #tring end
             in_string = False
             string_lenght = 0
+        #char detection
+        if ((buff[i] == '\'') and buff[i-1] != '\\' and not in_string and not in_single_line_comment and not in_multi_line_comment and not in_preprocessor and not in_char):
+            in_char = True
+            string_lenght = 0
+        if ((buff[i-1] == '\'') and string_lenght > 1 and buff[i-1] != '\\' and not in_string and not in_single_line_comment and not in_multi_line_comment and not in_preprocessor and in_char):
+            in_char = False
+            string_lenght = 0
         #single line comment detection
-        if ((buff[i] == '/' and buff[i+1] == '/') and not in_single_line_comment and not in_multi_line_comment and not in_string):
+        if ((buff[i] == '/' and buff[i+1] == '/') and not in_single_line_comment and not in_multi_line_comment and not in_string and not in_preprocessor and not in_char):
             in_single_line_comment = True
-        elif ((buff[i] == '\n') and in_single_line_comment and not in_multi_line_comment and not in_string):
+        elif ((buff[i] == '\n') and in_single_line_comment and not in_multi_line_comment and not in_string and not in_preprocessor and not in_char):
             in_single_line_comment = False
         #multi line comment detection
-        if ((buff[i] == '/' and buff[i+1] == '*') and not in_multi_line_comment and not in_single_line_comment and not in_string):
+        if ((buff[i] == '/' and buff[i+1] == '*') and not in_multi_line_comment and not in_single_line_comment and not in_string and not in_preprocessor and not in_char):
             in_multi_line_comment = True
-        elif ((buff[i-2] == '*' and buff[i-1] == '/') and in_multi_line_comment and not in_single_line_comment and not in_string):
+        elif ((buff[i-2] == '*' and buff[i-1] == '/') and in_multi_line_comment and not in_single_line_comment and not in_string and not in_preprocessor and not in_char):
             in_multi_line_comment = False
-    
+        #preporcessor directive detection
+        if ((buff[i-1] == '\n' and buff[i] == '#') and not in_multi_line_comment and not in_single_line_comment and not in_string and not in_preprocessor and not in_char):
+            in_preprocessor = True
+        elif ((buff[i] == '\n') and not in_multi_line_comment and not in_single_line_comment and not in_string and in_preprocessor and not in_char):
+            in_preprocessor = False
+
+        #G1 file header
+        if (i == 0 and not (buff[i] == '/' and buff[i+1] == '*')):
+            if (not flag_count):
+                buff = "/*\n** EPITECH PROJECT, 2024\n** NAME\n** File description:\n** DESCRIPTION\n*/\n" + buff
+                in_multi_line_comment = True
+            nminor += 1
+        
         #code fixing logic here
-        if (not (in_string or in_single_line_comment or in_multi_line_comment)):
+        if (not (in_string or in_single_line_comment or in_multi_line_comment or in_preprocessor or in_char)):
             #L2 tabs
             if (buff[i] == '\t'):
                 if (not flag_count):
@@ -257,25 +280,32 @@ for j in range(len(target_list)):
                 nminor = nminor + 1
             if (buff[i] == '\n'):
                 in_tab = True
-            elif (buff[i] != ' '):
+                tab_len = 0
+            elif (buff[i] != ' ' and in_tab):
                 in_tab = False
-                
+                if (tab_len % 4 != 0):
+                    if (not flag_count):
+                        buff = buff[:i] + ' '*(4 - tab_len % 4) + buff[i:]
+                    nminor = nminor + 1
+            elif (buff[i] == ' ' and in_tab):
+                tab_len += 1
+
             #more TODO (amount of spaces)
             #L3 spaces
-            # = sign, assignement and equality test
+            # = sign, assignement and (in)equality test (and increment assignement) (and greater than or equal)
             if (buff[i] == '='):
                 if (not (buff[i+1] == '=' or buff[i+1] == ' ')):
                     if (not flag_count):
                         buff = buff[:i+1] + ' ' + buff[i+1:]
                     nminor = nminor + 1
-                if (not (buff[i-1] == '=' or buff[i-1] == ' ')):
+                if (not (buff[i-1] == '=' or buff[i-1] == ' ' or buff[i-1] == '!' or buff[i-1] == '+' or buff[i-1] == '-' or buff[i-1] == '<' or buff[i-1] == '>')):
                     if (not flag_count):
                         buff = buff[:i] + ' ' + buff[i:]
                     nminor = nminor + 1
             # * sign, multiplication and pointer derefencing
             if (buff[i] == '*'):
                 #TODO : need to find a way to differenciate between multiplication and pointer deref
-                if (buff[i-1] != ' '):
+                if (buff[i-1] != ' ' and buff[i-1] != '*' and buff[i-1] != '(' and buff[i+1] != ')'):
                     if (not flag_count):
                         buff = buff[:i] + ' ' + buff[i:]
                     nminor = nminor + 1
@@ -291,7 +321,7 @@ for j in range(len(target_list)):
                     nminor = nminor + 1
             # / sign, division
             if (buff[i] == '/'):
-                if (buff[i+1] != ' '):
+                if (buff[i+1] != ' ' and buff[i+1] != '='):
                     if (not flag_count):
                         buff = buff[:i+1] + ' ' + buff[i+1:]
                     nminor = nminor + 1
@@ -301,7 +331,7 @@ for j in range(len(target_list)):
                     nminor = nminor + 1          
             # + sign, addition and incrementation
             if (buff[i] == '+'):
-                if (not (buff[i+1] == '+' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ')): 
+                if (not (buff[i+1] == '+' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ' or buff[i+1] == '=')): 
                     if (not flag_count):
                         buff = buff[:i+1] + ' ' + buff[i+1:]
                     nminor = nminor + 1
@@ -314,13 +344,13 @@ for j in range(len(target_list)):
                         buff = buff[:i-1] + buff[i:]
                         i -= 1
                     nminor = nminor + 1
-            # - sign, substraction and decrementation
-            if (buff[i] == '-'):
-                if (not (buff[i+1] == '-' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ')):
-                    if (not flag_count):
-                        buff = buff[:i+1] + ' ' + buff[i+1:]
-                    nminor = nminor + 1
-                if (not (buff[i-1] == '-' or buff[i-1] == ' ') and buff[i+1] != '-'):
+            # - sign, substraction and decrementation (no struct deref) (negative numbers)
+            if (buff[i] == '-' and buff[i+1] != '>'):
+                #if (not (buff[i+1] == '-' or buff[i+1] == ';' or buff[i+1] == ')' or buff[i+1] == ' ' or buff[i+1] == '=')):
+                #    if (not flag_count):
+                #        buff = buff[:i+1] + ' ' + buff[i+1:]
+                #    nminor = nminor + 1
+                if (not (buff[i-1] == '-' or buff[i-1] == ' ' or buff[i-1] == '(') and buff[i+1] != '-'):
                     if (not flag_count):
                         buff = buff[:i] + ' ' + buff[i:]
                     nminor = nminor + 1
@@ -331,7 +361,7 @@ for j in range(len(target_list)):
                     nminor = nminor + 1
             # , sign, comma
             if (buff[i] == ','):
-                if (buff[i+1] != ' '):
+                if (buff[i+1] != ' ' and buff[i+1] != '\n'):
                     if (not flag_count):
                         buff = buff[:i+1] + ' ' + buff[i+1:]
                     nminor = nminor + 1
@@ -352,6 +382,7 @@ for j in range(len(target_list)):
                     if (not flag_count):
                         buff = buff[:i+1] + buff[i+2:]
                     nminor = nminor + 1
+            # )
             if (buff[i] == ')'):
                 if (buff[i-1] == ' '):
                     if (not flag_count):
@@ -363,14 +394,31 @@ for j in range(len(target_list)):
                     buff = buff[:i] + buff[i+1:]
                 nminor = nminor + 1
             
-
-            
             #G7 trailing spaces
+            if (buff[i-1] == ' ' and buff[i] == '\n'):
+                if (not flag_count):
+                    while (buff[i-1] == ' '):
+                        buff = buff[:i-1] + buff[i:]
+                        i -= 1
+                nminor = nminor + 1
+            
             #G8 leading/trailing lines
+            #leading
+            if (i == 0 and buff[i] == '\n'):
+                nminor += 1
+                if (not flag_count):
+                    buff = buff[i+1:]
+                    continue
+            #trailing
+            if (i == len(buff)-1 and buff[i-1] == '\n' and buff[i] == '\n'):
+                if (not flag_count):
+                    buff = buff[:i]
+                    i -= 1
+                nminor += 1
+                
             #L1 line code content
             #L6 blank lines
             #F6 function without params
-            #G1 file header
             #L4 curly brackets
             
         #debug print file
@@ -379,7 +427,7 @@ for j in range(len(target_list)):
                 print(Red,end="")
             elif (in_multi_line_comment):
                 print(IRed,end="")
-            elif (in_string):
+            elif (in_string or in_char):
                 print(Yellow,end="")
             elif (in_tab):
                 print(Green,end="")
