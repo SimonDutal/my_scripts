@@ -306,7 +306,7 @@ for j in range(len(target_list)):
             # * sign, multiplication and pointer derefencing
             if (buff[i] == '*'):
                 #TODO : need to find a way to differenciate between multiplication and pointer deref
-                if (buff[i-1] != ' ' and buff[i-1] != '*' and buff[i-1] != '(' and buff[i+1] != ')'):
+                if (buff[i-1] != ' ' and buff[i-1] != '*' and buff[i-1] != '(' and buff[i+1] != ')' and buff[i-1] != '['):
                     if (not flag_count):
                         buff = buff[:i] + ' ' + buff[i:]
                     nminor = nminor + 1
