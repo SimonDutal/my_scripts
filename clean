@@ -1,3 +1,11 @@
 #!/usr/bin/bash
-find -type f -name "#*#" -delete -o -name "*~" -delete -o -name "a.out" -delete -o -name "*.gcno" -delete -o -name "*.gcda" -delete -o -name ".*.swp" -delete -o -name ".#*" -delete
-make -s clean 
+find -type f -name "#*#" -exec echo -n {}" " \; -delete
+find -type f -name "*~" -exec echo -n {}" " \; -delete
+find -type f -name "*.gcno" -exec echo -n {}" " \; -delete
+find -type f -name "*.gcda" -exec echo -n {}" " \; -delete
+find -type f -name ".*.swp" -exec echo -n {}" " \; -delete
+find -type f -name ".#*" -exec echo -n {}" " \; -delete
+find -type f -name "*.out" -exec echo -n {}" " \; -delete
+find -type f -name "*.a" -exec echo -n {}" " \; -delete
+echo ""
+make -s clean
