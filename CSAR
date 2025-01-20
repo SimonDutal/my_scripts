@@ -114,7 +114,7 @@ for i in (args):
     elif (i == '--remove'):
         flag_remove = True
     try:
-        refresh_delay = int(i)
+        refresh_delay = float(i)
     except:
         refresh_delay += 0 #very usefull except here
         
@@ -132,7 +132,7 @@ if (flag_help):
     print("  -q, --quiet           say less things.")
     print("  -r, --remove          remove coding-style-report.log before closing/looping")
     print("  -v, --verbose         say more things.")
-    print("  [REFRSH RATE]         nay interger the refresh delay when looping in seconds (default is 5).")
+    print("  [REFRESH RATE]        set the refresh delay when looping in seconds (default is 5).")
     print("use \"CSAR -l -a -v 1\" to have the classic function")
     exit(0)
 
@@ -201,10 +201,10 @@ while True:
         else:
             print()
 
-    if (not flag_loop):
-        break
     if (flag_remove):
         os.remove("coding-style-reports.log")
+    if (not flag_loop):
+        break
     time.sleep(refresh_delay)
 
 exit(ntotal)
