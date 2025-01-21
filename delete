@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import sys
+import subprocess
+import os
+
+def occu_at_the_end(namefile, endfile):
+    return 0 if namefile.endswith(endfile) else -1
+
+def delete(repertoire, extension):
+    for racine, repertoires, fichiers in os.walk(repertoire):
+        for fichier in fichiers:
+            if (occu_at_the_end(fichier, extension) == 0):
+                subprocess.run(["rm", "-f", os.path.join(racine, fichier)])
+        for repertoire in repertoires:
+            if (occu_at_the_end(repertoire, extension) == 0):
+                subprocess.run(["rm", "-rf", os.path.join(racine, repertoire)])
+
+
+liste = []
+for i in range(len(sys.argv)):
+    if (i != 0):
+        liste.append(sys.argv[i])
+
+for elem in liste:
+    delete('.', elem)
