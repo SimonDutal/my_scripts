@@ -1,11 +1,12 @@
 #!/usr/bin/bash
-find -type f -name "#*#" -exec echo -n {}" " \; -delete
-find -type f -name "*~" -exec echo -n {}" " \; -delete
-find -type f -name "*.gcno" -exec echo -n {}" " \; -delete
-find -type f -name "*.gcda" -exec echo -n {}" " \; -delete
-find -type f -name ".*.swp" -exec echo -n {}" " \; -delete
-find -type f -name ".#*" -exec echo -n {}" " \; -delete
-find -type f -name "*.out" -exec echo -n {}" " \; -delete
-find -type f -name "*.a" -exec echo -n {}" " \; -delete
-echo ""
+find -type f -name "#*#" -exec echo -ne "\033[0;90m"{}" " \; -delete
+find -type f -name "*~" -exec echo -ne "\033[0;90m"{}" " \; -delete
+find -type f -name "*.gcno" -exec echo -ne "\033[0m"{}" " \; -delete
+find -type f -name "*.gcda" -exec echo -ne "\033[0m"{}" " \; -delete
+find -type f -name ".*.swp" -exec echo -ne "\033[0;90m"{}" " \; -delete
+find -type f -name ".#*" -exec echo -ne "\033[0;90m"{}" " \; -delete
+find -type f -name "*.out" -exec echo -ne "\033[0m"{}" " \; -delete
+find -type f -name "*.a" -exec echo -ne "\033[0m"{}" " \; -delete
+find -type f -name "*.o" -exec echo -ne "\033[0m"{}" " \; -delete
+echo -e "\033[0m"
 make -s clean
