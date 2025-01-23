@@ -7,13 +7,20 @@ def occu_at_the_end(namefile, endfile):
     return 0 if namefile.endswith(endfile) else -1
 
 def delete(repertoire, extension):
+    is_printed = 0
     for racine, repertoires, fichiers in os.walk(repertoire):
         for fichier in fichiers:
             if (occu_at_the_end(fichier, extension) == 0):
+                print('"', fichier, '"',"successfully deleted")
                 subprocess.run(["rm", "-f", os.path.join(racine, fichier)])
+                is_printed += 1
         for repertoire in repertoires:
             if (occu_at_the_end(repertoire, extension) == 0):
+                print(repertoire, "successfully deleted")
                 subprocess.run(["rm", "-rf", os.path.join(racine, repertoire)])
+                is_printed += 1
+    if (is_printed == 0):
+        return -1;
 
 
 liste = []
@@ -22,4 +29,11 @@ for i in range(len(sys.argv)):
         liste.append(sys.argv[i])
 
 for elem in liste:
-    delete('.', elem)
+    if elem.strip() != "~" and elem.strip() == os.path.abspath(os.sep):
+        h = delete('.', elem)
+        if h == -1:
+            print(elem, ": File not found")
+    else:
+        h = delete('.', "~")
+        if h == -1:
+            print("file ending with ~ were not found")
